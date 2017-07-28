@@ -1,5 +1,5 @@
 #! usr/bin/env python
-#-*- coding:utf-8 -*-
+# -*- coding:utf-8 -*-
 
 
 import smtplib
@@ -9,6 +9,7 @@ import sys
 from timeit import Timer
 import time
 from datetime import datetime
+from FortiMail import mail_gonder
 hosgeldin="""
                   ***************************
                   Fortigate Firewall IPS Alert 
@@ -43,21 +44,7 @@ def baglan():
   except pxssh.ExceptionPexpect as e :
       print(e)
       sys.exit()
-def mail_gonder(mesaj):
-       gonderen="email adress" #sender email adress , gönderen e posta adresi
-       pswd="parola" #email password
-       alici="receiver email" # to email adress , alıcı e mail
-       cc="cc adress"
-       body=mesaj
-       try:
-           sunucu=smtplib.SMTP("smtp.live.com",587)#smtp server
-           sunucu.starttls()
-           sunucu.login(gonderen,pswd)
-           sunucu.sendmail(gonderen,[alici,cc],body)
-           sunucu.close()
-           print("mail gönderildi")
-       except smtplib.SMTPException as e :
-           print(e)
+
 def oku():
     dosya=open("session.txt","r")
     a=0
@@ -67,7 +54,8 @@ def oku():
             print(okunan)
             ips=okunan.strip()
             if(ips!="IPS attacks blocked: 0 total in 1 minute"):
-                mail_gonder("IPS Alert Mesajı:" + ips  )
+               ml=mail_gonder(ips)
+               ml.mail()
             a=1
 
 def islem():
@@ -82,6 +70,3 @@ def islem():
       print(50*"*")
       time.sleep(600)
 islem()
-#t=Timer(lambda :islem())
-
-#print t.timeit(number=10)
